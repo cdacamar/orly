@@ -19,6 +19,7 @@
 #include <base/fs_notifier.h>
 
 #include <algorithm>
+#include <cstring>
 #include <new>
 
 #include <unistd.h>
@@ -29,7 +30,7 @@ using namespace std;
 using namespace Base;
 using namespace Util;
 
-constexpr size_t
+constexpr const size_t
     TFsNotifier::MinBufferSize,
     TFsNotifier::DefBufferSize;
 
@@ -69,6 +70,7 @@ void TFsNotifier::RemoveWatch(int wd) {
 const TFsNotifier::TEvent *TFsNotifier::TryPeek() const {
   assert(this);
   if (Cursor >= Limit) {
+    memset(Buffer, 0, BufferSize);
     ssize_t size = read(Fd, Buffer, BufferSize);
     if (size < 0) {
       if (errno == EWOULDBLOCK) {
