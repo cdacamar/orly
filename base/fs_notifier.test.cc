@@ -247,10 +247,9 @@ FIXTURE(Typical) {
      and expected events from watched directories. */
   TBuilder actual_builder, expected_builder;
   /* Start watching on a background thread. */
-  unique_ptr<TWatcher> watcher(new TWatcher(actual_builder));
+  auto watcher = std::make_unique<TWatcher>(actual_builder);
   /* Perform some file system operations for the watcher to see. */
-  unique_ptr<TWatchedDir> dir1(new TWatchedDir(
-      "fs_notifier_1", expected_builder, watcher->FsNotifier));
+  auto dir1 = std::make_unique<TWatchedDir>("fs_notifier_1", expected_builder, watcher->FsNotifier);
   dir1->CreateFile("hello.txt");
   dir1->CreateFile("doctor.txt");
   dir1->CreateFile("name.txt");
@@ -258,8 +257,7 @@ FIXTURE(Typical) {
   dir1->CreateDir("evil_secrets");
   dir1->DeleteFile("doctor.txt");
   dir1->DeleteDir("evil_secrets");
-  unique_ptr<TWatchedDir> dir2(new TWatchedDir(
-      "fs_notifier_2", expected_builder, watcher->FsNotifier));
+  auto dir2 = std::make_unique<TWatchedDir>("fs_notifier_2", expected_builder, watcher->FsNotifier);
   dir2->CreateFile("continue.txt");
   dir1.reset();
   dir2.reset();
